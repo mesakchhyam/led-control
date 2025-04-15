@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LED Toggle</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    .toggle {
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>💡 LED Toggle</h1>
+  <label class="toggle">
+    <input type="checkbox" id="ledSwitch">
+    <span id="status">OFF</span>
+  </label>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDexGspl1rsCR3QIbEY0_sTOFqq1wxro9k",
+      authDomain: "http://real-time-energy-monitor-98ea1.firebaseapp.com",
+      databaseURL: "https://real-time-energy-monitor-98ea1-default-rtdb.firebaseio.com",
+      projectId: "real-time-energy-monitor-98ea1",
+      storageBucket: "http://real-time-energy-monitor-98ea1.firebasestorage.app",
+      messagingSenderId: "387676030662",
+      appId: "1:387676030662:web:25ff52d0c502883f5979c7"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const controlRef = db.ref("/sensor/control");
+
+    const ledSwitch = document.getElementById("ledSwitch");
+    const statusText = document.getElementById("status");
+
+    // Update Firebase when switch is toggled
+    ledSwitch.addEventListener("change", () => {
+      const newState = ledSwitch.checked ? "ON" : "OFF";
+      controlRef.set(newState);
+    });
+
+    // Sync UI with Firebase
+    controlRef.on("value", (snapshot) => {
+      const val = snapshot.val();
+      if (val === "ON") {
+        ledSwitch.checked = true;
+        statusText.textContent = "ON";
+      } else {
+        ledSwitch.checked = false;
+        statusText.textContent = "OFF";
+      }
+    });
+  </script>
+</body>
+</html>
